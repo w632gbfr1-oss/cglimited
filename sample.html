@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CGlimited — Sample board</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --paper: #f3eee4;
+      --ink: #16130f;
+      --muted: #5c564c;
+      --rule: #c9bfae;
+      --rust: #9a3412;
+      --field: #ece4d6;
+      --white: #faf7f1;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--paper); color: var(--ink); }
+    body {
+      font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+      font-size: 15px;
+      line-height: 1.45;
+    }
+    .page {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 48px 28px 80px;
+    }
+    header.mast {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: end;
+      border-bottom: 1px solid var(--ink);
+      padding-bottom: 18px;
+      margin-bottom: 28px;
+    }
+    .wordmark {
+      font-family: Fraunces, "Times New Roman", serif;
+      font-weight: 600;
+      font-size: 42px;
+      letter-spacing: -0.03em;
+      line-height: 0.95;
+      margin: 0;
+    }
+    .stamp {
+      border: 1.5px solid var(--rust);
+      color: var(--rust);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 8px 12px;
+      align-self: start;
+    }
+    .lede {
+      font-family: Fraunces, serif;
+      font-size: 22px;
+      font-weight: 400;
+      max-width: 38rem;
+      margin: 0 0 8px;
+    }
+    .meta { color: var(--muted); font-size: 13px; max-width: 40rem; }
+    .meta strong { color: var(--ink); font-weight: 600; }
+    h2 {
+      font-family: Fraunces, serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin: 40px 0 14px;
+      padding-top: 8px;
+      border-top: 1px solid var(--rule);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+    }
+    @media (max-width: 820px) {
+      .grid { grid-template-columns: 1fr; }
+      header.mast { grid-template-columns: 1fr; }
+    }
+    figure.frame {
+      margin: 0;
+      background: var(--white);
+      border: 1px solid var(--rule);
+    }
+    .chrome {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 10px;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 1px solid var(--rule);
+    }
+    .chrome b { color: var(--rust); letter-spacing: 0.18em; font-weight: 600; }
+    .stage { position: relative; overflow: hidden; }
+    .stage .sample {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 2;
+      border: 1.5px solid var(--rust);
+      color: var(--rust);
+      background: rgba(250, 247, 241, 0.92);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      padding: 4px 7px;
+    }
+    /* LinkedIn 1200×627 shown at board scale */
+    .li .art {
+      aspect-ratio: 1200 / 627;
+      padding: 7% 8%;
+      background: #1c1915;
+      color: #f3eee4;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .li .kicker {
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #d7c4a8;
+    }
+    .li h3 {
+      font-family: Fraunces, serif;
+      font-weight: 600;
+      font-size: clamp(22px, 3.4vw, 36px);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin: 10px 0 0;
+      max-width: 16ch;
+    }
+    .li p { margin: 0; font-size: 13px; color: #d9d0c3; max-width: 36ch; }
+    .li .foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-top: 1px solid #3a342c;
+      padding-top: 10px;
+      margin-top: 12px;
+    }
+    /* X 1600×900 */
+    .x .art {
+      aspect-ratio: 1600 / 900;
+      padding: 8% 8%;
+      background: var(--field);
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+    }
+    .x .rule { height: 2px; width: 42px; background: var(--rust); }
+    .x h3 {
+      font-family: Fraunces, serif;
+      font-size: clamp(20px, 3vw, 34px);
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      line-height: 1.08;
+      margin: 14px 0 0;
+      max-width: 18ch;
+    }
+    .x .sub { color: var(--muted); margin: 10px 0 0; max-width: 42ch; font-size: 13px; }
+    .x .foot {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    /* IG 1080² */
+    .ig .art {
+      aspect-ratio: 1;
+      background: #faf7f1;
+      padding: 10%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-left: 8px solid var(--ink);
+    }
+    .ig .num {
+      font-family: Fraunces, serif;
+      font-size: 13px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--rust);
+    }
+    .ig h3 {
+      font-family: Fraunces, serif;
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      line-height: 1.02;
+      margin: 0;
+      max-width: 10ch;
+    }
+    .ig ul {
+      list-style: none;
+      padding: 0;
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .ig li { padding: 6px 0; border-top: 1px solid var(--rule); }
+    .ig .price {
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    /* Search RSA typeset, not a fake SERP screenshot */
+    .search {
+      grid-column: 1 / -1;
+    }
+    .rsa {
+      padding: 22px 24px 26px;
+      background: var(--white);
+    }
+    .rsa .label {
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .rsa .headline {
+      font-family: Fraunces, serif;
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin: 0 0 6px;
+    }
+    .rsa .url { color: var(--rust); font-size: 13px; margin-bottom: 10px; }
+    .rsa .desc { color: var(--muted); max-width: 62ch; margin: 0 0 18px; }
+    .pins {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    @media (max-width: 720px) { .pins { grid-template-columns: 1fr; } }
+    .pin {
+      border-top: 1px solid var(--rule);
+      padding-top: 8px;
+      font-size: 12px;
+    }
+    .pin span {
+      display: block;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    figcaption {
+      padding: 8px 10px 10px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    table.skus {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    table.skus th {
+      text-align: left;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: var(--muted);
+      border-bottom: 1px solid var(--ink);
+      padding: 0 8px 8px 0;
+    }
+    table.skus td {
+      padding: 10px 12px 10px 0;
+      border-bottom: 1px solid var(--rule);
+      vertical-align: top;
+    }
+    table.skus td:nth-child(2),
+    table.skus td:nth-child(3) { font-variant-numeric: lining-nums; white-space: nowrap; }
+    .refuses {
+      columns: 2;
+      gap: 28px;
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+    @media (max-width: 720px) { .refuses { columns: 1; } }
+    footer.note {
+      margin-top: 48px;
+      padding-top: 16px;
+      border-top: 1px solid var(--ink);
+      font-size: 12px;
+      color: var(--muted);
+      max-width: 58ch;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="mast">
+      <div>
+        <p class="wordmark">CGlimited</p>
+        <p class="lede">Ads and landing copy for technical products. Priced. Spec-fit. No invented proof.</p>
+        <p class="meta">Self-sample, 3 September 2026. Every frame is <strong>SAMPLE</strong> — not client work, not a case study. No paid relationships to disclose because none exist yet.</p>
+      </div>
+      <div class="stamp">Sample</div>
+    </header>
+
+    <h2>Spec-fit frames — CGlimited, not a generic pack</h2>
+    <div class="grid">
+      <figure class="frame li">
+        <div class="chrome"><span>LinkedIn feed · 1200 × 627</span><b>Sample</b></div>
+        <div class="stage">
+          <span class="sample">SAMPLE</span>
+          <div class="art">
+            <div>
+              <div class="kicker">CGlimited · Brief $368</div>
+              <h3>The page is live. The offer is not.</h3>
+            </div>
+            <p>Positioning line, five headlines, three network-fit ads, three claims we will not make without proof. Forty-eight hours after payment clears.</p>
+            <div class="foot"><span>Technical founders</span><span>100% upfront</span></div>
+          </div>
+        </div>
+        <figcaption>Tone: hiring-manager, B2B. Crop: landscape feed. Length: one dominant line, one supporting, no carousel junk.</figcaption>
+      </figure>
+
+      <figure class="frame x">
+        <div class="chrome"><span>X / Twitter · 1600 × 900</span><b>Sample</b></div>
+        <div class="stage">
+          <span class="sample">SAMPLE</span>
+          <div class="art">
+            <div class="rule"></div>
+            <div>
+              <h3>We will not invent a case study to win yours.</h3>
+              <p class="sub">Public SKUs. Public refusal list. Work samples only after a paid job, or clearly labeled self-samples of our own pages.</p>
+            </div>
+            <div class="foot">CGlimited · Kit $1,800 / 5 days</div>
+          </div>
+        </div>
+        <figcaption>Tone: founder-to-founder, short. Crop: 16:9. Primary text would sit in the post, not inside the image.</figcaption>
+      </figure>
+
+      <figure class="frame ig">
+        <div class="chrome"><span>Instagram square · 1080 × 1080</span><b>Sample</b></div>
+        <div class="stage">
+          <span class="sample">SAMPLE</span>
+          <div class="art">
+            <div class="num">01 / List</div>
+            <h3>Quote the list.</h3>
+            <ul>
+              <li>Brief — $368 / 48h</li>
+              <li>Ship — $668 / 7 days</li>
+              <li>Campaign — $1,118 / 10 days</li>
+              <li>Kit — $1,800 / 5 days</li>
+              <li>Retainer — $3,600 / mo</li>
+            </ul>
+            <div class="price">Floors exist. We do not go under them.</div>
+          </div>
+        </div>
+        <figcaption>Visual/local crop shown because the board must prove we can spec a square. Until a customer converts on IG, we do not buy IG ads.</figcaption>
+      </figure>
+
+      <figure class="frame search">
+        <div class="chrome"><span>Search · Responsive search ad fields (not a fake SERP)</span><b>Sample</b></div>
+        <div class="stage">
+          <span class="sample">SAMPLE</span>
+          <div class="rsa">
+            <div class="label">Headlines (30) · Descriptions (90) · Path</div>
+            <p class="headline">Ad copy for unpublished games</p>
+            <p class="url">cglimited.example / brief</p>
+            <p class="desc">Playtest + store-page ads for unpublished games. Brief $368 or Ship $668. No invented proof. No tester farms. No nudity, health, credit, crypto, or political work.</p>
+            <div class="pins">
+              <div class="pin"><span>H2</span> Brief $368 · 48 hours</div>
+              <div class="pin"><span>H3</span> Ship $668 · playtest + ads</div>
+              <div class="pin"><span>D2</span> 100% upfront. Written SOW. Spec-fit crops, not a template pack.</div>
+            </div>
+          </div>
+        </div>
+        <figcaption>Intent channel. Used only after a customer actually converts from search — until the first collected dollar, free forums only.</figcaption>
+      </figure>
+    </div>
+
+    <h2>List prices (quote these)</h2>
+    <table class="skus">
+      <thead>
+        <tr>
+          <th>SKU</th>
+          <th>List</th>
+          <th>Floor</th>
+          <th>What ships</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Brief / 48h</td>
+          <td>$368</td>
+          <td>$293</td>
+          <td>Positioning line, 5 headlines, 3 spec-fit ads, 3 claims we will not make. Designed board + export frames.</td>
+        </tr>
+        <tr>
+          <td>Ship / 7 days</td>
+          <td>$668</td>
+          <td>$533</td>
+          <td>~90-minute playtest + written report + Brief-level ads. Not a Play/App Store tester farm.</td>
+        </tr>
+        <tr>
+          <td>Campaign / 10 days</td>
+          <td>$1,118</td>
+          <td>$893</td>
+          <td>One network, 8 frames at crop, store-page or hero rewrite, claims sheet, 7-day calendar. No media buying.</td>
+        </tr>
+        <tr>
+          <td>Kit / 5 days</td>
+          <td>$1,800</td>
+          <td>$1,425</td>
+          <td>Above-the-fold rewrite, 8 spec-fit ads, 7-day organic calendar. Board + frames.</td>
+        </tr>
+        <tr>
+          <td>Retainer / month</td>
+          <td>$3,600</td>
+          <td>$3,000</td>
+          <td>After one paid Kit, Campaign, or Ship. Monthly in advance. Still no floated ad spend.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Claims we will not make without proof</h2>
+    <ol class="refuses">
+      <li>That CGlimited has client case studies, ROAS, or named logos. We do not.</li>
+      <li>That a Brief, Ship, Kit, or Campaign will raise conversion by a number we have not measured.</li>
+      <li>That we will recruit 12 Play testers or guarantee store production access. We do not sell tester farms.</li>
+      <li>That we buy, boost, or float anyone’s media. Clients buy their own ads.</li>
+    </ol>
+
+    <footer class="note">
+      Craft bar: <code>/workspace/firm/playbooks/craft.md</code>.
+      Solvency caps: <code>/workspace/firm/playbooks/growth-and-solvency.md</code>.
+      This board is unpaid brand work while growth cash is $0. Do not spend the last 50% of AI credits on it.
+    </footer>
+  </div>
+</body>
+</html>
